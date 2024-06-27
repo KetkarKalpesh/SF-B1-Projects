@@ -1,0 +1,39 @@
+<template>
+    <lightning-card title="Currency Converter" icon-name="utility:moneybag">
+        <div class="currency-converter-container slds-p-around_medium">
+            <lightning-input
+                type="number"
+                variant="standard"
+                name="name"
+                value={amount}
+                label="Amount"
+                onchange={handleAmountChange}>
+            </lightning-input>
+
+            <lightning-input
+                label="Source Currency"
+                value={sourceCurrency}
+                onchange={handleSourceCurrencyChange}>
+            </lightning-input>
+
+            <lightning-input
+                label="Target Currency"
+                value={targetCurrency}
+                onchange={handleTargetCurrencyChange}
+                class="slds-p-bottom_medium">
+            </lightning-input>
+
+            <lightning-button
+                variant="brand"
+                label="Convert"
+                onclick={convertCurrency}>
+            </lightning-button>
+
+            <template if:true={convertedAmount}>
+                <div class="converted-amount-container slds-m-top_medium">
+                    <div><strong>Converted Amount: {convertedAmount}</strong></div>
+                </div>
+            </template>
+        </div>
+    </lightning-card>
+</template>
