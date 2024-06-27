@@ -1,0 +1,43 @@
+public class CurrencyConvertorController {
+	@AuraEnabled(cacheable = true)
+    public static Map<String, Double> fetchCurrencyRates() {
+        return currencyConvertor.getLastestCurrencyRate();
+    }
+}
+
+
+public class currencyConvertor {
+    private static final String Base_URL = 'https://api.freecurrencyapi.com/v1/latest?apikey=';
+    
+    private static String getAPIKey () {
+        Currency_Convertor_Config__c config = Currency_Convertor_Config__c.getOrgDefaults();
+        return config.API_Key__c;
+    }
+    
+    private static String createFinalURL() {
+        String apiKey = getAPIKey();
+        return Base_URL + apiKey;
+    }
+    
+    @AuraEnabled(cacheable = true)
+    public static Map<String, Double> getLastestCurrencyRate() {
+        Map<String, Double> currencyRates = new Map<String, Double>();
+        String finalURL =  createFinalURL();
+        HttpRequest req = new HttpRequest();
+        req.setEndpoint(finalUrl);
+        req.setMethod('GET');
+        
+        Http http = new Http();
+        HttpResponse res;
+        res = http.send(req);
+        if(res.getStatusCode() == 200) {
+            String resBody = res.getBody();
+            Map<String, object> jsonResponse = (Map<String, Object>) JSON.deserializeUntyped(resBody);
+            Map<String, Object> data = (Map<String, Object>) jsonResponse.get('data');
+            For(String key : data.keySet()) {
+                currencyRates.put(key, (double) data.get(key));
+            }
+        }
+        return currencyRates;
+    }
+}
